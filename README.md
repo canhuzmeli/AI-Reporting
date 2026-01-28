@@ -1,4 +1,4 @@
-# IOE AI Reporting Tool
+# AI Reporting Tool
 
 This tool automates the generation of executive reports for engineering teams. It fetches project data from GitHub Projects, generates a narrative summary using Google's Gemini AI, and publishes the results to Google Sheets and Google Docs.
 
