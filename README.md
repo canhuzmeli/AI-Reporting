@@ -22,6 +22,7 @@ Ensure you have Python 3.x installed. This project uses Python, not Node.js, so 
     *   Google Drive API
     *   Google Docs API
 *   Create a **Service Account** and download the JSON key file.
+    *   *Note: You do not need to assign specific IAM roles (like Owner/Editor) to the Service Account in the Google Cloud Console. Access is granted via file sharing.*
 *   Rename the key file to `service_account.json` and place it in the project root.
 *   **Important**: Share your target Google Sheet and Google Doc with the `client_email` address found inside `service_account.json` (give it "Editor" access).
 
