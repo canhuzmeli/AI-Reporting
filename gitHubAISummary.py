@@ -72,6 +72,7 @@ def get_gemini_summary(data):
     return result['candidates'][0]['content']['parts'][0]['text']
 
 def run_report():
+    #TODO change this into a loop and use a project ID array to pass on to fetch_github_project_data, and then aggregate the data into a single report
     print(f"[{datetime.now()}] Fetching GitHub data...")
     raw_data = fetch_github_project_data()
     
