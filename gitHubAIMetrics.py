@@ -1,108 +1,10 @@
 #pip install requests needed
 import requests
 import json
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 import config
+import fetchGitHubData
 
-# --- CONFIGURATION ---
-
-
-def fetch_github_project_data():
-    """Fetches items and metadata from GitHub Project V2."""
-    url = "https://api.github.com/graphql"
-    
-    # This query retrieves the last 40 items, their titles, bodies, and 'Status' field
-    query = """
-    query($id: ID!) {
-      node(id: $id) {
-        ... on ProjectV2 {
-          items(first: 40) {
-            nodes {
-              updatedAt
-              content {
-                ... on PullRequest {
-                  title
-                  body
-                  state
-                  createdAt
-                  updatedAt
-                  mergedAt
-                  author { login }
-                  timelineItems(last: 20) {
-                    nodes {
-                      __typename
-                      ... on IssueComment {
-                        createdAt
-                        author { login }
-                        body
-                      }
-                      ... on PullRequestReview {
-                        createdAt
-                        author { login }
-                        state
-                        body
-                      }
-                      ... on ClosedEvent {
-                        createdAt
-                        actor { login }
-                      }
-                      ... on ReopenedEvent {
-                        createdAt
-                        actor { login }
-                      }
-                      ... on MergedEvent {
-                        createdAt
-                        actor { login }
-                      }
-                    }
-                  }
-                }
-                ... on Issue {
-                  title
-                  body
-                  state
-                  createdAt
-                  updatedAt
-                  author { login }
-                  timelineItems(last: 20) {
-                    nodes {
-                      __typename
-                      ... on IssueComment {
-                        createdAt
-                        author { login }
-                        body
-                      }
-                      ... on ClosedEvent {
-                        createdAt
-                        actor { login }
-                      }
-                      ... on ReopenedEvent {
-                        createdAt
-                        actor { login }
-                      }
-                    }
-                  }
-                }
-              }
-              fieldValueByName(name: "Status") {
-                ... on ProjectV2ItemFieldSingleSelectValue { name }
-              }
-            }
-          }
-        }
-      }
-    }
-    """
-    
-
-    headers = {"Authorization": f"Bearer {config.GITHUB_TOKEN}"}
-    variables = {"id": config.PROJECT_ID}
-    
-    response = requests.post(url, json={'query': query, 'variables': variables}, headers=headers)
-    response.raise_for_status()
-    print(response.status_code)
-    print(response.json())
-    return response.json()
 
 def get_gemini_summary(data):
     """Feeds the GitHub JSON to Gemini for an Executive Summary."""
@@ -135,7 +37,7 @@ def get_gemini_summary(data):
 def run_report():
     #TODO change this into a loop and use a project ID array to pass on to fetch_github_project_data, and then aggregate the data into a single report
     print(f"[{datetime.now()}] Fetching GitHub data...")
-    raw_data = fetch_github_project_data()
+    raw_data = fetchGitHubData.fetch_github_project_data()
     
     print(f"[{datetime.now()}] Generating AI summary...")
 
